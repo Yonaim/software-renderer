@@ -230,7 +230,7 @@ namespace math
 	inline Vec3 normalize(Vec3 v)
 	{
 		float l = std::sqrt(dot(v, v));
-		return l > 0 ? (v * (1.0f / l)) : v;
+		return l > 0.0f ? (v * (1.0f / l)) : v;
 	}
 
 	// ----------------------------------
