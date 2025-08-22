@@ -15,21 +15,20 @@ struct MeshTag;
 struct TextureTag;
 struct MaterialTag;
 struct ObjectTag;
+struct WindowTag;
 
 using MeshHandle = Handle<MeshTag>;
 using TextureHandle = Handle<TextureTag>;
 using MaterialHandle = Handle<MaterialTag>;
-using ObjectHandle = Handle<ObjectTag>;
+using WindowHandle = Handle<WindowTag>;
 
 // -----------------------------------------------------------------------------
 
-// stateless
 namespace fileIO
 {
-    int saveRaw(const char *src, const char *dst);
-    int saveBufferToImage(const core::FrameBuffer &src, const char *dst);
-    std::string loadRaw(const char *src);
-
+    int writeBytes(const std::string &src, const std::string &dst);
+    int writeImage(const core::FrameBuffer &src, const std::string &dst);
+    std::string readBytes(const std::string &src);
 } // namespace fileIO
 
 /*
@@ -40,16 +39,34 @@ namespace fileIO
 */
 namespace asset
 {
-    using AssetData = std::variant<core::Mesh, core::Texture, core::Material>;
-
-    AssetData load(const std::string &path);
+    using AssetData =
+        std::variant<core::Mesh, core::Texture, core::Material, scene::Scene>;
+    typedef AssetData (*parseFunc)(const std::string &);
 
     namespace
     {
-        core::Mesh     parseObject(const std::string &raw);
-        core::Texture  parseTexture(const std::string &raw);
-        core::Material parseMaterial(const std::string &raw);
+        AssetData parseObj(const std::string &raw);
+        AssetData parseMtl(const std::string &raw);
+        AssetData parsePng(const std::string &raw);
+        AssetData parsePpm(const std::string &raw);
+        AssetData parseJson(const std::string &raw);
     } // namespace
+
+    const std::string extensions[] = {"obj", "mtl", "png", "ppm", "json"};
+    const parseFunc   parseFuncs[] = {parseObj, parseMtl, parsePng, parsePpm,
+                                      parseJson};
+
+    AssetData load(const std::string &path)
+    {
+        std::string bytes = fileIO::readBytes(path);
+        AssetData   asset;
+
+        // extension 판단 후 해당하는 parseFunc 호출
+        // ...
+
+        return asset;
+    }
+
 } // namespace asset
 
 namespace window
@@ -60,17 +77,28 @@ namespace window
         uint32_t id;
     };
 
-    void showBuffer(const core::FrameBuffer &src);
+    WindowHandle createInstance();
+    void         showBuffer(const core::FrameBuffer &src);
 
 } // namespace window
 
 namespace core
 {
-    struct Mesh;
-    struct Texture;
-    struct Material;
-    struct FrameBuffer;
-    struct DepthBuffer;
+    struct Mesh
+    {
+    };
+    struct Texture
+    {
+    };
+    struct Material
+    {
+    };
+    struct FrameBuffer
+    {
+    };
+    struct DepthBuffer
+    {
+    };
 } // namespace core
 
 namespace scene
@@ -120,14 +148,51 @@ namespace resource
 
 } // namespace resource
 
+#include <functional>
+
 namespace renderer
 {
-    struct RenderParams
+    // 차후 쉐이더 프로그램 추가
+    // using VS = std::function<VSOut(const VSIn&)>
+    // using FS = std::function<FSOut(const FSIn&)>
+    class Renderer
     {
-        uint32_t width;
-        uint32_t height;
+      private:
+        // VS vs;
+        // FS fs;
+      public:
+        int flags;
+        int render(const scene::Scene &scn, core::FrameBuffer &fb,
+                   core::DepthBuffer &db);
     };
-
-    int render(const scene::Scene &scn, core::FrameBuffer &fb,
-               core::DepthBuffer &db, const RenderParams &params = {});
 } // namespace renderer
+
+class App
+{
+  private:
+    renderer::Renderer mainRenderer;
+    // window::Manager    mainWindow;
+    scene::Scene      mainScene;
+    resource::Manager resourceManager;
+
+    // 차후 배열로 변경
+    core::FrameBuffer frameBuffer;
+    core::DepthBuffer depthBuffer;
+
+  public:
+    void run()
+    {
+        // 1. process files (read & parse)
+        // 실제로는 scene.json 안에 경로가 다 들어있음 (테스트용)
+        mainScene = asset::load("scene.json");
+        core::Mesh someMesh = asset::load("triangle.obj");
+        resourceManager.addMesh(someMesh);
+
+        // 2. render
+        mainRenderer.render(mainScene, frameBuffer, depthBuffer);
+
+        // 3. save & show framebuffer
+        const std::string savedPath = "save.png";
+        fileIO::writeImage(frameBuffer, savedPath);
+    }
+};
