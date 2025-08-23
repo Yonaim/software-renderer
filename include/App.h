@@ -17,24 +17,10 @@ class App
     core::DepthBuffer depthBuffer;
 
   public:
-    void processAssets(const std::string &path)
-    {
-        asset::AssetData data = asset::load(path);
-
-        if (auto *scene = std::get_if<scene::Scene>(&data))
-        {
-            mainScene = *scene;
-        }
-        else
-        {
-            // error
-        }
-    }
-
     void run()
     {
         // 1. process files (read & parse)
-        processAssets("scene.json");
+        mainScene = asset::loadScene("scene.json", resourceManager);
 
         // 2. render
         mainRenderer.render(mainScene, frameBuffer, depthBuffer);
