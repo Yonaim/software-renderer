@@ -1,0 +1,11 @@
+﻿{
+  "camera": { "pos": [0,1,3], "rot": [0,0,0], "fov": 60, "near": 0.1, "far": 100 },
+  "objects": [
+    {
+      "mesh": "assets/meshes/teapot.obj",
+      "material": "assets/materials/teapot.mat.json",
+      "textures": { "albedo": "assets/textures/teapot.png", "normal": "assets/textures/teapot_n.png" },
+      "transform": { "pos": [0,0,0], "rot": [0,0,0], "scale": [1,1,1] }
+    }
+  ]
+}
