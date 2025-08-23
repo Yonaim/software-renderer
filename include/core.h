@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "handle.h"
+#include "math/math.h"
 #include <cstdint>
 #include <vector>
 
@@ -25,8 +26,11 @@ namespace core
         int                     width, height = 0;
         std::vector<math::Vec4> data; // RGBA
 
-        math::Vec4 sample(int u, int v) const;
-        math::Vec4 sample(math::Vec2 uv) const;
+        math::Vec4 sample(int u, int v) const { return data[width * v + u]; }
+        math::Vec4 sample(math::Vec2 uv) const
+        {
+            return data[width * uv.y + uv.x];
+        }
     };
 
     // 우선 Emmisive는 자체 발광만 함 (주변 사물에 영향x)
@@ -44,7 +48,7 @@ namespace core
         TextureHandle albedoMap;
         TextureHandle normalMap;
     };
-    
+
     struct FrameBuffer
     {
         int                  width, height;
@@ -84,7 +88,7 @@ namespace core
             color[idx + 3] = clamp_0_1(rgba.w) * 255.0f;
         }
     };
-    
+
     struct DepthBuffer
     {
         int                width, height;
