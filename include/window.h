@@ -1,11 +1,10 @@
 ﻿#pragma once
-#include <cstdint>
-#include "scene.h"
 #include "core.h"
+#include "scene.h"
+#include <cstdint>
 
 namespace window
 {
-
     struct Manager
     {
         uint32_t id;
