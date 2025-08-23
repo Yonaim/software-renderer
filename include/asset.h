@@ -38,8 +38,8 @@ namespace asset
             float pos[3];
             float rot[3];
             float fov;
-            float far;
-            float near;
+            float zfar;
+            float znear;
         };
 
         struct sceneObjectConfig
@@ -110,9 +110,9 @@ namespace asset
         // camera
         scn.camera.pos = floatsToVec3(scn_config.camera.pos);
         scn.camera.rot = floatsToVec3(scn_config.camera.rot);
-        scn.camera.fov = scn_config.camera.fov;
-        scn.camera.near = scn_config.camera.near;
-        scn.camera.far = scn_config.camera.far;
+        scn.camera.fovY = scn_config.camera.fov;
+        scn.camera.znear = scn_config.camera.znear;
+        scn.camera.zfar = scn_config.camera.zfar;
 
         // objects
         for (auto obj : scn.objects)
