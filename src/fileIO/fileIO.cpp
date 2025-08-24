@@ -60,7 +60,7 @@ namespace fileIO
                 buf.push_back(color[i * 4 + 2]); // B
             }
         }
-        return (writeBytes(buf, path));
+        return (writeBytes(path, buf));
     }
 
     bool writePNG(const std::string &path, int width, int height,
