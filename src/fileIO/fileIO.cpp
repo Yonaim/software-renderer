@@ -26,7 +26,7 @@ namespace fileIO
         return bytes;
     }
 
-    bool writeBytes(const std::string &path, const std::vector<uint8_t> &bytes);
+    bool writeBytes(const std::string &path, const std::vector<uint8_t> &bytes)
     {
         std::ofstream ofs;
 
@@ -39,7 +39,7 @@ namespace fileIO
     }
 
     bool writePPM(const std::string &path, int width, int height,
-                  const std::vector<uint8_t> &color, bool isRGBA = true)
+                  const std::vector<uint8_t> &color, bool isRGBA)
     {
         std::vector<uint8_t> buf;
         const int            pixelCnt = color.size() / (isRGBA ? 4 : 3);
@@ -64,7 +64,7 @@ namespace fileIO
     }
 
     bool writePNG(const std::string &path, int width, int height,
-                  const std::vector<uint8_t> &color, bool isRGBA = true)
+                  const std::vector<uint8_t> &color, bool isRGBA)
     {
         // TODO
         return true;
