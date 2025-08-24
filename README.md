@@ -1,5 +1,17 @@
 ﻿
-### Math Conventions
+## Dependency
+
+This project has minimal dependencies for implementing software rasterizer.
+
+- Management of window: SDL2 (cross-platform)
+- Image format 'PNG': ??
+
+### 메모
+현재 SDL2는 시스템에 설치된 것을 찾음. (개발용)
+추후 CMake의 FetchContent 이용 예정
+
+
+## Math Conventions
 
 This project uses row-vector math with row-major matrix storage, and a right-handed coordinate system:
 
