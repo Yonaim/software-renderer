@@ -3,12 +3,13 @@
 #include "renderer.h"
 #include "resource.h"
 #include "scene.h"
+#include "window.h"
 
 class App
 {
   private:
     renderer::Renderer mainRenderer;
-    // window::Manager    mainWindow;
+    window::Manager    mainWindow;
     scene::Scene       mainScene;
     resource::Manager  resourceManager;
 
