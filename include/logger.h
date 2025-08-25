@@ -33,7 +33,7 @@ inline const char *toString(LogLevel level)
 inline void logMessage(LogLevel level, const char *func, const char *file, int line,
                        std::string_view what)
 {
-    std::cerr << "[" << toString(level) << "]" << func << " @ " << file << ":" << line << "" << what
+    std::cerr << "[" << toString(level) << "]\t" << func << " @ " << file << ": " << line << ": " << what
               << std::endl;
 }
 
