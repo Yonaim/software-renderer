@@ -1,15 +1,18 @@
 ﻿
 ## Dependency
 
-This project has minimal dependencies for implementing software rasterizer.
+This project has minimal dependencies for implementing software rasterizer.  
+Header-only libraries are in `/external`.
 
 - Management of window: SDL2 (cross-platform)
-- Image format 'PNG': ??
+- Image file (.png) read & write: stb_image
+- object file (.obj): tiny_obj_loader
+- json file (.json): simdjson
 
 ### 메모
 현재 SDL2는 시스템에 설치된 것을 찾음. (개발용)
 추후 CMake의 FetchContent 이용 예정
-
+나머지는 헤더 온리
 
 ## Math Conventions
 
