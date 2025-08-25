@@ -15,8 +15,7 @@
 */
 namespace asset
 {
-    using AssetData =
-        std::variant<core::Mesh, core::Texture, core::Material, scene::Scene>;
+    using AssetData = std::variant<core::Mesh, core::Texture, core::Material, scene::Scene>;
     typedef AssetData (*parseFunc)(const std::string &);
 
     inline auto floatsToVec3 = [](float *f_s) -> math::Vec3
@@ -74,14 +73,17 @@ namespace asset
 
     inline parseFunc findParser(std::string_view path)
     {
-        const std::string_view ext = path.substr(path.rfind("."));
-        for (auto e : entries)
-            if (e.ext == ext)
-                return e.f;
+        size_t pos = path.rfind(".");
+        if (pos != std::string_view::npos)
+        {
+            const std::string_view ext = path.substr(pos + 1);
+            for (auto e : entries)
+                if (e.ext == ext)
+                    return e.f;
+        }
         return nullptr;
     }
 
     AssetData    loadAsset(const std::string &path);
-    scene::Scene loadScene(const std::string &path,
-                           resource::Manager &resourceManager);
+    scene::Scene loadScene(const std::string &path, resource::Manager &resourceManager);
 } // namespace asset
