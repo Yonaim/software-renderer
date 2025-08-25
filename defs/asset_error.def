@@ -1,0 +1,3 @@
+﻿X(FileNotFound, "File not found")
+X(InvalidFormat, "Invalid format")
+X(OutOfMemory, "Out of memory")
