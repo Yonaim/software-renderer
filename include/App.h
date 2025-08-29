@@ -4,6 +4,7 @@
 #include "resource.h"
 #include "scene.h"
 #include "window.h"
+#include "logger.h"
 
 class App
 {
@@ -24,7 +25,9 @@ class App
     void run()
     {
         // 1. process files (read & parse)
+        LOG_DEBUG("parsing asset start")
         mainScene = asset::loadScene("assets/scene.json", resourceManager);
+        LOG_DEBUG("parsing asset done")
 
         // 2. render
         mainRenderer.render(mainScene, fb, db);
