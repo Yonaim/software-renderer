@@ -15,8 +15,30 @@
 */
 namespace asset
 {
-    using AssetData = std::variant<core::Mesh, core::Texture, core::Material, scene::Scene>;
-    typedef AssetData (*parseFunc)(const std::string &);
+#define X(name, msg) name,
+    enum class ErrorCode
+    {
+#include "common_error.def"
+#include "asset_error.def"
+    };
+#undef X
+
+#define X(name, msg)                                                                               \
+    case ErrorCode::name:                                                                          \
+        return msg;
+    inline const char *getErrorMessage(ErrorCode e)
+    {
+        switch (e)
+        {
+#include "common_error.def"
+#include "asset_error.def"
+        }
+        return "Unknown error";
+    }
+#undef X
+
+    using AssetData =
+        std::variant<std::monostate, core::Mesh, core::Texture, core::Material, scene::Scene>;
 
     inline auto floatsToVec3 = [](float *f_s) -> math::Vec3
     { return {*f_s, *(f_s + 1), *(f_s + 2)}; };

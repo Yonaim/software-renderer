@@ -5,6 +5,28 @@
 
 namespace resource
 {
+#define X(name, msg) name,
+    enum class ErrorCode
+    {
+#include "common_error.def"
+#include "resource_error.def"
+    };
+#undef X
+
+#define X(name, msg)                                                                               \
+    case ErrorCode::name:                                                                          \
+        return msg;
+    inline const char *getErrorMessage(ErrorCode e)
+    {
+        switch (e)
+        {
+#include "common_error.def"
+#include "resource_error.def"
+        }
+        return "Unknown error";
+    }
+#undef X
+
     class Manager
     {
       private:

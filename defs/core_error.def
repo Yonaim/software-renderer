@@ -1,1 +1,3 @@
-﻿// dummy
+﻿X(InitFail,       "Core initialization failed")
+X(NullPointer,    "Null pointer access")
+X(InvalidState,   "Invalid core state")

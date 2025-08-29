@@ -1,1 +1,4 @@
-﻿// dummy
+﻿X(FileNotFound,   "File not found")
+X(AccessDenied,   "Access denied")
+X(ReadError,      "File read error")
+X(WriteError,     "File write error")

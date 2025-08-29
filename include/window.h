@@ -8,6 +8,28 @@
 
 namespace window
 {
+#define X(name, msg) name,
+    enum class ErrorCode
+    {
+#include "common_error.def"
+#include "window_error.def"
+    };
+#undef X
+
+#define X(name, msg)                                                                               \
+    case ErrorCode::name:                                                                          \
+        return msg;
+    inline const char *getErrorMessage(ErrorCode e)
+    {
+        switch (e)
+        {
+#include "common_error.def"
+#include "window_error.def"
+        }
+        return "Unknown error";
+    }
+#undef X
+
     // (deltaTime, width, height, channels, pixels)
     using FrameCallback = std::function<bool(float, int, int, int, std::vector<uint8_t>)>;
     using EventCallback = std::function<void(SDL_Event &)>;

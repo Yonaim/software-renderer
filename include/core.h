@@ -3,9 +3,32 @@
 #include "math/math.h"
 #include <cstdint>
 #include <vector>
+#include <algorithm>
 
 namespace core
 {
+#define X(name, msg) name,
+    enum class ErrorCode
+    {
+#include "core_error.def"
+#include "common_error.def"
+    };
+#undef X
+
+#define X(name, msg)                                                                               \
+    case ErrorCode::name:                                                                          \
+        return msg;
+    inline const char *getErrorMessage(ErrorCode e)
+    {
+        switch (e)
+        {
+#include "core_error.def"
+#include "common_error.def"
+        }
+        return "Unknown error";
+    }
+#undef X
+
     struct Vertex
     {
         math::Vec3 position;
@@ -27,10 +50,7 @@ namespace core
         std::vector<math::Vec4> data; // RGBA
 
         math::Vec4 sample(int u, int v) const { return data[width * v + u]; }
-        math::Vec4 sample(math::Vec2 uv) const
-        {
-            return data[width * uv.y + uv.x];
-        }
+        math::Vec4 sample(math::Vec2 uv) const { return data[width * uv.y + uv.x]; }
     };
 
     // 우선 Emmisive는 자체 발광만 함 (주변 사물에 영향x)
@@ -58,8 +78,7 @@ namespace core
 
         void clear(const math::Vec4 &rgba)
         {
-            auto clamp_0_1 = [](float n)
-            { return std::max(0.0f, std::min(n, 1.0f)); };
+            auto    clamp_0_1 = [](float n) { return std::max(0.0f, std::min(n, 1.0f)); };
             uint8_t r = clamp_0_1(rgba.x) * 255.0f;
             uint8_t g = clamp_0_1(rgba.y) * 255.0f;
             uint8_t b = clamp_0_1(rgba.z) * 255.0f;
@@ -78,9 +97,8 @@ namespace core
         {
             if (!(0 <= x && x <= width) || !(0 <= y && y <= height))
                 return;
-            auto clamp_0_1 = [](float n)
-            { return std::max(0.0f, std::min(n, 1.0f)); };
-            int idx = (y * width + x) * 4;
+            auto clamp_0_1 = [](float n) { return std::max(0.0f, std::min(n, 1.0f)); };
+            int  idx = (y * width + x) * 4;
 
             color[idx + 0] = clamp_0_1(rgba.x) * 255.0f;
             color[idx + 1] = clamp_0_1(rgba.y) * 255.0f;

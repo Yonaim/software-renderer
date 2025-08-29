@@ -6,6 +6,28 @@
 
 namespace renderer
 {
+#define X(name, msg) name,
+    enum class ErrorCode
+    {
+#include "common_error.def"
+#include "renderer_error.def"
+    };
+#undef X
+
+#define X(name, msg)                                                                               \
+    case ErrorCode::name:                                                                          \
+        return msg;
+    inline const char *getErrorMessage(ErrorCode e)
+    {
+        switch (e)
+        {
+#include "common_error.def"
+#include "renderer_error.def"
+        }
+        return "Unknown error";
+    }
+#undef X
+
     // 차후 쉐이더 프로그램 추가
     namespace shader
     {
@@ -63,8 +85,7 @@ namespace renderer
 
       public:
         int  flags;
-        int  render(const scene::Scene &scn, core::FrameBuffer &fb,
-                    core::DepthBuffer &db);
+        int  render(const scene::Scene &scn, core::FrameBuffer &fb, core::DepthBuffer &db);
         void setVertexShader(const shader::VS &vs);
         void setFragmentShader(const shader::FS &vs);
     };

@@ -1,3 +1,5 @@
-﻿X(FileNotFound, "File not found")
-X(InvalidFormat, "Invalid format")
-X(OutOfMemory, "Out of memory")
+﻿// asset_error.def
+X(FileNotFound,  "File not found")
+X(Unsupported,   "Unsupported asset type")
+X(InvalidFormat,   "Invalid asset format")
+X(InvalidChannel,   "Invalid asset format")

@@ -1,1 +1,4 @@
-﻿// dummy
+﻿X(OK,       "OK (None Error)")
+X(OutOfMemory,   "Out of memory")
+X(InvalidParam,  "Invalid parameter")
+X(OperationFail, "Operation failed")

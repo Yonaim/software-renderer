@@ -6,6 +6,29 @@
 
 namespace fileIO
 {
+#define X(name, msg) name,
+    enum class ErrorCode
+    {
+#include "common_error.def"
+#include "fileio_error.def"
+    };
+#undef X
+    const char *getErrorMessage(ErrorCode e);
+
+#define X(name, msg)                                                                               \
+    case ErrorCode::name:                                                                          \
+        return msg;
+    inline const char *getErrorMessage(ErrorCode e)
+    {
+        switch (e)
+        {
+#include "common_error.def"
+#include "fileio_error.def"
+        }
+        return "Unknown error";
+    }
+#undef X
+
     std::vector<std::byte> readBytes(const std::string &path);
     bool writeBytes(const std::string &path, const std::vector<uint8_t> &bytes);
     bool writePPM(const std::string &path, int width, int height,
