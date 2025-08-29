@@ -1,11 +1,59 @@
 ﻿{
-  "camera": { "pos": [0,1,3], "rot": [0,0,0], "fov": 60, "near": 0.1, "far": 100 },
+  "name": "sample_scene",
+  "camera": {
+    "pos": [0.0, 1.0, 3.0],
+    "rot": [0.0, 0.0, 0.0],
+    "fov": 60.0,
+    "near": 0.1,
+    "far": 100.0
+  },
+  "lights": [
+    {
+      "id": "main_dir_light",
+      "type": "directional",
+      "dir": [1.0, -1.0, -1.0],
+      "color": [1.0, 1.0, 1.0],
+      "intensity": 3.0,
+      "cast_shadow": true
+    },
+    {
+      "id": "fill_point",
+      "type": "point",
+      "pos": [2.0, 2.0, 2.0],
+      "color": [1.0, 0.8, 0.6],
+      "intensity": 5.0,
+      "range": 10.0
+    }
+  ],
+  "environment": {
+    "background": [0.1, 0.1, 0.1],
+    "skybox": "assets/skybox/sky.hdr",
+    "ibl": {
+      "diffuse": "assets/ibl/diffuse.hdr",
+      "specular": "assets/ibl/specular.hdr"
+    }
+  },
+  "settings": {
+    "gamma": 2.2,
+    "exposure": 1.0,
+    "tone_mapping": "ACES"
+  },
+
+  "materials": [
+    { "id": "Bronze", "file": "assets/materials/teapot.mtl", "name": "Bronze" },
+    { "id": "Chrome", "file": "assets/materials/metal.mtl",  "name": "Chrome" }
+  ],
+
+  "geometries": [
+    { "id": "teapot_geo", "file": "assets/meshes/teapot.obj" }
+  ],
+
   "objects": [
     {
-      "mesh": "assets/meshes/teapot.obj",
-      "material": "assets/materials/teapot.mat.json",
-      "textures": { "albedo": "assets/textures/teapot.png", "normal": "assets/textures/teapot_n.png" },
-      "transform": { "pos": [0,0,0], "rot": [0,0,0], "scale": [1,1,1] }
+      "id": "teapot_1",
+      "mesh": "teapot_geo",
+      "material": "Bronze",
+      "transform": { "pos": [0.0, 0.0, 0.0], "rot": [0.0, 0.0, 0.0], "scale": [1.0, 1.0, 1.0] }
     }
   ]
 }
