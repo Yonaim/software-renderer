@@ -5,12 +5,12 @@
 namespace window
 {
     // channels: 3=RGB24, 4=RGBA8888
-    bool Manager::create(const std::string &title, int w, int h, int ch)
+    bool Manager::create(const std::string &title, int w, int h, int chn)
     {
         destroy();
         width = w;
         height = h;
-        channels = ch;
+        channels = chn;
 
         // window
         window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
