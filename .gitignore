@@ -1,3 +1,6 @@
 ﻿.vscode
 *.o
+*.d
 a.out
+renderer.out
+test.out
