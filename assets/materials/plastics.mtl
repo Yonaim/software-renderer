@@ -1,0 +1,10 @@
+﻿# plastics.mtl
+
+newmtl PlasticRed
+Ka 0.000 0.000 0.000
+Kd 0.800 0.100 0.100
+Ks 0.040 0.040 0.040
+Ns 128.000
+Ni 1.500
+d 1.000
+illum 2

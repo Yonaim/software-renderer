@@ -44,11 +44,11 @@
       { "id": "Gold",   "file": "assets/materials/metals.mtl", "name": "Gold"   },
      { "id": "Silver", "file": "assets/materials/metals.mtl", "name": "Silver" },
     { "id": "PlasticRed",  "file": "assets/materials/plastics.mtl",  "name": "PlasticRed" },
-    { "id": "Glass",       "file": "assets/materials/glass.mtl",     "name": "Glass" }
+    { "id": "Glass",       "file": "assets/materials/glass.mtl" }
   ],
 
   "geometries": [
-    { "id": "cube_geo", "file": "assets/meshes/multi_mtl.obj" }
+    { "id": "cube_geo", "file": "assets/meshes/multi_mtl_cube.obj" }
   ],
 
   "objects": [

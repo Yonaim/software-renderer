@@ -1,0 +1,56 @@
+﻿# multi_mtl.obj
+mtllib metals.mtl
+mtllib plastics.mtl
+mtllib glass.mtl
+
+o Cube
+
+# 8 vertices (단위 1 큐브, 원점 기준)
+v 0.0 0.0 0.0
+v 1.0 0.0 0.0
+v 1.0 1.0 0.0
+v 0.0 1.0 0.0
+v 0.0 0.0 1.0
+v 1.0 0.0 1.0
+v 1.0 1.0 1.0
+v 0.0 1.0 1.0
+
+# vertex normals
+vn  0.0  0.0 -1.0
+vn  0.0  0.0  1.0
+vn  0.0 -1.0  0.0
+vn  0.0  1.0  0.0
+vn -1.0  0.0  0.0
+vn  1.0  0.0  0.0
+
+# texture coords (각 면 풀사이즈 매핑)
+vt 0.0 0.0
+vt 1.0 0.0
+vt 1.0 1.0
+vt 0.0 1.0
+
+s off
+
+# FRONT (z=0) → Chrome
+usemtl Chrome
+f 1/1/1 2/2/1 3/3/1 4/4/1
+
+# BACK (z=1) → PlasticRed
+usemtl PlasticRed
+f 5/1/2 6/2/2 7/3/2 8/4/2
+
+# LEFT (x=0) → Gold
+usemtl Gold
+f 1/1/5 4/2/5 8/3/5 5/4/5
+
+# RIGHT (x=1) → Silver
+usemtl Silver
+f 2/1/6 6/2/6 7/3/6 3/4/6
+
+# TOP (y=1) → Glass
+usemtl Glass
+f 4/1/4 3/2/4 7/3/4 8/4/4
+
+# BOTTOM (y=0) → PlasticRed (재사용)
+usemtl PlasticRed
+f 1/1/3 5/2/3 6/3/3 2/4/3
