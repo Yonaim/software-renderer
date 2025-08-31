@@ -3,13 +3,18 @@
 #include "fileIO.h"
 #include "resource.h"
 #include "scene.h"
-#include <exception>
+#include <filesystem>
+#include <expected>
 #include <string>
 #include <variant>
+#include <span>
+
+namespace fs = std::filesystem;
 
 /*
 [File Format]
-- Mesh: obj, mtl
+- Geometry: obj
+- Material: mtl
 - Texture: png, ppm
 - Scene: json
 */
@@ -37,75 +42,108 @@ namespace asset
     }
 #undef X
 
-    using AssetData =
-        std::variant<std::monostate, core::Mesh, core::Texture, core::Material, scene::Scene>;
-
     inline auto floatsToVec3 = [](float *f_s) -> math::Vec3
     { return {*f_s, *(f_s + 1), *(f_s + 2)}; };
 
-    struct Entry
-    {
-        std::string ext;
-        parseFunc   f;
-    };
+    template <class T> using Result = std::expected<T, ErrorCode>;
 
-    // TODO: simdjson JSON 파서 사용
     namespace parser
     {
-        using Texture = std::pair<std::string_view, std::string_view>;
-
-        struct sceneCameraConfig
+        struct CameraConfig
         {
-            float pos[3];
-            float rot[3];
-            float fov;
-            float zfar;
-            float znear;
+            math::Vec3 pos;
+            math::Vec3 rot;
+            float      fov;
+            float      near;
+            float      far;
         };
 
-        struct sceneObjectConfig
+        using LightConfig = scene::Light;
+
+        struct GeometryConfig
         {
-            std::string_view     mesh;
-            std::string_view     material;
-            std::vector<Texture> textures;
-            float                pos[3] = {0, 0, 0};
-            float                rot[3] = {0, 0, 0};
-            float                scale = 1;
+            std::string_view id;
+            std::string_view file;
         };
 
-        struct sceneConfig
+        struct MaterialConfig
         {
-            sceneCameraConfig              camera;
-            std::vector<sceneObjectConfig> objects;
+            std::string_view id;
+            std::string_view file;
+            std::string_view name;
         };
 
-        // TODO: 파싱 코드 작성
-        AssetData obj(const std::string &raw);
-        AssetData mtl(const std::string &raw);
-        AssetData png(const std::string &raw);
-        AssetData ppm(const std::string &raw);
-        AssetData json(const std::string &raw);
+        struct ObjectConfig
+        {
+            std::string_view id;
+            std::string_view mesh_id;
+            math::Vec3       pos;
+            math::Vec3       rot;
+            math::Vec3       scale;
+        };
+
+        struct SceneConfig
+        {
+            std::string                 name;
+            CameraConfig                camera;
+            std::vector<LightConfig>    lights;
+            std::vector<MaterialConfig> materials;
+            std::vector<GeometryConfig> geometries;
+            std::vector<ObjectConfig>   objects;
+        };
+
+        // one instance per one file
+        // file명은 caller가 추가해서 전체 Materialkey를 완성해야 함
+        using LocalMaterialList =
+            std::vector<std::pair<std::string, core::Material>>; // {id, material}
+
+        enum class PixelFormat
+        {
+            Gray8,
+            GA8,
+            RGB8,
+            RGBA8,
+            RGB16,
+            RGBA16
+        };
+
+        enum class TransferFunc
+        {
+            NonLinear,
+            Linear
+        };
+
+        struct ImageBuffer // sRGB
+        {
+            int                  width, height;
+            PixelFormat          format;
+            TransferFunc         transFunc;
+            std::vector<uint8_t> pixels;
+        };
+
+        // text format
+        Result<core::Mesh>        obj(std::string_view text);
+        Result<LocalMaterialList> mtl(std::string_view text);
+        Result<SceneConfig>       json(std::string_view text);
+        // binary format
+        Result<ImageBuffer> png(std::span<const std::byte> bytes);
+        Result<ImageBuffer> ppm(std::span<const std::byte> bytes);
     } // namespace parser
 
-    const Entry entries[] = {{"obj", parser::obj},
-                             {"mtl", parser::mtl},
-                             {"png", parser::png},
-                             {"ppm", parser::ppm},
-                             {"json", parser::json}};
-
-    inline parseFunc findParser(std::string_view path)
+    namespace loader
     {
-        size_t pos = path.rfind(".");
-        if (pos != std::string_view::npos)
-        {
-            const std::string_view ext = path.substr(pos + 1);
-            for (auto e : entries)
-                if (e.ext == ext)
-                    return e.f;
-        }
-        return nullptr;
-    }
+        using KeyedMaterial = std::pair<resource::MaterialKey, core::Material>;
+        using KeyedMaterialList = std::vector<std::pair<resource::MaterialKey, core::Material>>;
 
-    AssetData    loadAsset(const std::string &path);
-    scene::Scene loadScene(const std::string &path, resource::Manager &resourceManager);
+        // load whole scene and all resources
+        Result<scene::Scene> loadSceneAndResources(const fs::path    &sceneJson,
+                                                   resource::Manager &mgr);
+        // load & parsing
+        Result<parser::SceneConfig> loadSceneConfig(const fs::path &jsonPath);
+        Result<core::Mesh>          loadMesh(const fs::path &objPath);
+        Result<core::Material>      loadMaterial(const fs::path &mtlPath, std::string_view name);
+        Result<KeyedMaterialList>   loadMaterialList(const fs::path &mtlPath);
+        Result<parser::ImageBuffer> loadImage(const fs::path &imgPath);
+
+    } // namespace loader
 } // namespace asset
