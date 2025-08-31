@@ -1,5 +1,5 @@
 ﻿{
-  "name": "sample_scene",
+  "name": "cube_scene",
   "camera": {
     "pos": [0.0, 1.0, 3.0],
     "rot": [0.0, 0.0, 0.0],
@@ -40,20 +40,26 @@
   },
 
   "materials": [
-    { "id": "Bronze", "file": "assets/materials/teapot.mtl", "name": "Bronze" },
-    { "id": "Chrome", "file": "assets/materials/metal.mtl",  "name": "Chrome" }
+      { "id": "Chrome", "file": "assets/materials/metals.mtl", "name": "Chrome" },
+      { "id": "Gold",   "file": "assets/materials/metals.mtl", "name": "Gold"   },
+     { "id": "Silver", "file": "assets/materials/metals.mtl", "name": "Silver" },
+    { "id": "PlasticRed",  "file": "assets/materials/plastics.mtl",  "name": "PlasticRed" },
+    { "id": "Glass",       "file": "assets/materials/glass.mtl",     "name": "Glass" }
   ],
 
   "geometries": [
-    { "id": "teapot_geo", "file": "assets/meshes/teapot.obj" }
+    { "id": "cube_geo", "file": "assets/meshes/multi_mtl.obj" }
   ],
 
   "objects": [
     {
-      "id": "teapot_1",
-      "mesh": "teapot_geo",
-      "material": "Bronze",
-      "transform": { "pos": [0.0, 0.0, 0.0], "rot": [0.0, 0.0, 0.0], "scale": [1.0, 1.0, 1.0] }
+      "id": "cube_1",
+      "mesh": "cube_geo",
+      "transform": {
+        "pos":   [0.0, 0.0, 0.0],
+        "rot":   [0.0, 0.0, 0.0],
+        "scale": [1.0, 1.0, 1.0]
+      }
     }
   ]
 }
