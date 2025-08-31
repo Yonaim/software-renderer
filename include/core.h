@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <vector>
 #include <algorithm>
+#include <expected>
 
 namespace core
 {
@@ -55,9 +56,25 @@ namespace core
 
     struct Texture
     {
-        int                     width, height = 0;
+        int                     width = 0;
+        int                     height = 0;
         std::vector<math::Vec4> data; // RGBA
 
+        enum class Origin
+        {
+            TopLeft,
+            BottomLeft
+        };
+        enum class AlphaMode
+        {
+            Straight,
+            Premultiplied
+        };
+
+        Origin    origin = Origin::TopLeft;    // 옵션
+        AlphaMode alpha = AlphaMode::Straight; // 옵션
+
+        // todo: 추후 샘플러 분리 고려 (clamp, repeat, mirror)
         math::Vec4 sample(int u, int v) const { return data[width * v + u]; }
         math::Vec4 sample(math::Vec2 uv) const { return data[width * uv.y + uv.x]; }
     };
@@ -65,17 +82,20 @@ namespace core
     // 우선 Emmisive는 자체 발광만 함 (주변 사물에 영향x)
     struct Material // PBR
     {
-        // uniform pasrameters
-        math::Vec3 albedo;
-        float      metallic;
-        float      roughness;
-        float      emissive;
-        float      reflectance; // Fresnel 효과 (TODO: 공부 필요)
+        // scalar/color parameter (Linear)
+        math::Vec3 baseColor{1.0f, 1.0f, 1.0f}; // Kd → baseColor
+        float      opacity{1.0f};               // d (0..1)
+        float      metallic{0.0f};              // 금속성(0=비금속, 1=금속)
+        float      roughness{0.5f};             // 거칠기(0=거울, 1=거칠)
+        float      ior{1.5f};                   // 굴절률(디폴트: 유전체 1.5 근처)
+        math::Vec3 emissive{0.0f, 0.0f, 0.0f};
+        float      emissiveIntensity{0.0f};
+        bool       doubleSided{false}; // 백페이스 제거 비활성화 여부
 
-        // texture maps
-        // TODO: metallic map, emmisive map 추가 고려
-        TextureHandle albedoMap;
-        TextureHandle normalMap;
+        // texture handle (없을시 id = 0)
+        TextureHandle baseColorTex{};        
+        TextureHandle normalTex{};
+        TextureHandle occlusionTex{};
     };
 
     struct FrameBuffer
