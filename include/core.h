@@ -37,8 +37,17 @@ namespace core
         math::Vec2 uv;
     };
 
+    struct Submesh
+    {
+        std::string    id; // MaterialName_#Number
+        MaterialHandle material;
+        uint32_t       idxStart;
+        uint32_t       idxEnd;
+    };
+
     struct Mesh
     {
+        std::vector<Submesh>  subs;
         std::vector<Vertex>   vertices;
         std::vector<uint32_t> indices;
         // TODO: AABB 등 최적화용 자료구조 추가
