@@ -69,19 +69,20 @@ namespace scene
 
     using Light = std::variant<light::Directional, light::Point, light::Spot, light::Ambient>;
 
+    struct HandlesById // id -> handle
+    {
+        std::unordered_map<std::string, MeshHandle>     mesh;
+        std::unordered_map<std::string, MaterialHandle> material;
+        std::unordered_map<std::string, TextureHandle>  texture;
+    };
+
     struct Scene
     {
         std::string         name;
         Camera              camera;
         std::vector<Light>  lights;
         std::vector<Object> objects;
-
-        struct HandlesById // id -> handle
-        {
-            std::unordered_map<std::string, MeshHandle>     mesh;
-            std::unordered_map<std::string, MaterialHandle> material;
-            std::unordered_map<std::string, TextureHandle>  texture;
-        };
+        HandlesById         handlesById;
 
         Scene() = default;
         void addObject(const Object &obj);
