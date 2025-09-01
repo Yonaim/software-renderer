@@ -28,7 +28,9 @@ namespace scene
 
         Camera() = default;
         Camera(const math::Vec3 &p, const math::Vec3 &r, float fovy, float zn, float zf) noexcept
-            : pos(p), rot(r), fovY(fovy), znear(zn), zfar(zf);
+            : pos(p), rot(r), fovY(fovy), znear(zn), zfar(zf)
+        {
+        }
     };
 
     namespace light
