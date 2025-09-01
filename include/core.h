@@ -40,7 +40,7 @@ namespace core
 
     struct Submesh
     {
-        std::string    id; // MaterialName_#Number
+        uint32_t       groupId; // MaterialName_#Number
         MaterialHandle material;
         uint32_t       idxStart;
         uint32_t       idxEnd;
@@ -93,7 +93,7 @@ namespace core
         bool       doubleSided{false}; // 백페이스 제거 비활성화 여부
 
         // texture handle (없을시 id = 0)
-        TextureHandle baseColorTex{};        
+        TextureHandle baseColorTex{};
         TextureHandle normalTex{};
         TextureHandle occlusionTex{};
     };
