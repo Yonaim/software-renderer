@@ -3,6 +3,13 @@
 #include <iostream>
 #include <string>
 
+template <typename... Args> std::string makeLogString(Args &&...args)
+{
+    std::ostringstream oss;
+    oss << ... << args;
+    return oss.str();
+}
+
 enum class LogLevel
 {
     DEBUG,
@@ -33,8 +40,8 @@ inline const char *toString(LogLevel level)
 inline void logMessage(LogLevel level, const char *func, const char *file, int line,
                        std::string_view what)
 {
-    std::cerr << "[" << toString(level) << "]\t" << func << " @ " << file << ": " << line << ": " << what
-              << std::endl;
+    std::cerr << "[" << toString(level) << "]\t" << func << " @ " << file << ": " << line << ": "
+              << what << std::endl;
 }
 
 inline void logMessage(LogLevel level, const char *func, const char *file, int line)
