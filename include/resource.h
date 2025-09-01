@@ -4,6 +4,7 @@
 #include <vector>
 #include <expected>
 #include <map>
+#include "logger.h"
 
 namespace resource
 {
@@ -30,17 +31,11 @@ namespace resource
 #undef X
     template <class T> using Result = std::expected<T, ErrorCode>;
 
-    enum class OverwritePolicy
-    {
-        Error,
-        KeepExisted,
-        Replace
-    };
+    using MeshKey = std::string;                             // filePath
+    using TextureKey = std::string;                          // filePath
+    using MaterialKey = std::pair<std::string, std::string>; // {filePath, name}
 
-    using MeshKey = std::string;
-    using TextureKey = std::string;
-    using MaterialKey = std::pair<std::string, std::string>; // {file, name}
-
+    // =============================== Pool ====================================
     struct MeshPool
     {
         std::vector<core::Mesh>           items;
@@ -59,6 +54,7 @@ namespace resource
         std::map<std::string, TextureHandle> idToHandle;
     };
 
+    // ============================== Register =================================
     enum class OverwritePolicy
     {
         KeepExisted,
@@ -66,15 +62,58 @@ namespace resource
         Error
     };
 
-    enum class RegisterOutcome
+    template <class HandleT, class KeyT> struct RegisterOutcome
     {
-        Reused,
-        Inserted,
-        Replaced
+        enum class Status
+        {
+            Reused,
+            Inserted,
+            Replaced,
+            Failed
+        } status;
+        HandleT                  handle;
+        KeyT                     key;
+        std::optional<ErrorCode> err;
     };
 
-    template <class HandleT>
-    using RegisterResult = std::expected<std::pair<HandleT, RegisterOutcome>, ErrorCode>;
+    template <class HandleT, class KeyT>
+    bool isRegisterFailed(const RegisterOutcome<HandleT, KeyT> &res)
+    {
+        using Status = typename RegisterOutcome<HandleT, KeyT>::Status;
+        return (res.status == Status::Failed);
+    }
+
+    template <class HandleT, class KeyT>
+    void logRegisterOutcome(const RegisterOutcome<HandleT, KeyT> &res, std::string_view id)
+    {
+        using Status = typename RegisterOutcome<HandleT, KeyT>::Status;
+
+        // fail
+        if (res.status == Status::Failed)
+        {
+            std::string_view reason = res.err ? getErrorMessage(*res.err) : "<unknown>";
+            LOG_ERROR(makeLogString("register failed: id='", res.key, "', reason=", reason));
+            return;
+        }
+
+        // success
+        switch (res.status)
+        {
+        case Status::Reused:
+            LOG_DEBUG("id='", res.key, "' reused (handle=", res.handle, ")");
+            break;
+        case Status::Inserted:
+            LOG_DEBUG("id='", res.key, "' inserted (handle=", res.handle, ")");
+            break;
+        case Status::Replaced:
+            LOG_INFO("id='", res.key, "' replaced (handle=", res.handle, ")");
+            break;
+        case Status::Failed: // 위에서 이미 처리
+            break;
+        }
+    }
+
+    // =============================== Manager =================================
 
     class Manager
     {
@@ -89,15 +128,15 @@ namespace resource
         core::Material &getMaterial(MaterialHandle handle) const;
         core::Texture  &getTexture(TextureHandle handle) const;
 
-        RegisterResult<MeshHandle> registerMesh(const MeshKey    &key,
-                                                const core::Mesh *init = nullptr,
-                                                OverwritePolicy pol = OverwritePolicy::KeepExisted);
+        RegisterOutcome<MeshHandle, MeshKey>
+        registerMesh(const MeshKey &key, const core::Mesh *init = nullptr,
+                     OverwritePolicy pol = OverwritePolicy::KeepExisted);
 
-        RegisterResult<MaterialHandle>
+        RegisterOutcome<MaterialHandle, MaterialKey>
         registerMaterial(const MaterialKey &key, const core::Material *init = nullptr,
                          OverwritePolicy pol = OverwritePolicy::KeepExisted);
 
-        RegisterResult<TextureHandle>
+        RegisterOutcome<TextureHandle, TextureKey>
         registerTexture(const TextureKey &key, const core::Texture *init = nullptr,
                         OverwritePolicy pol = OverwritePolicy::KeepExisted);
     };
