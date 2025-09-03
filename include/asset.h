@@ -76,7 +76,7 @@ namespace asset
         struct ObjectConfig
         {
             std::string_view id;
-            std::string_view mesh_id;
+            std::string_view meshId;
             math::Vec3       pos;
             math::Vec3       rot;
             math::Vec3       scale;
@@ -94,8 +94,12 @@ namespace asset
 
         // one instance per one file
         // file명은 caller가 추가해서 전체 Materialkey를 완성해야 함
-        using LocalMaterialList =
-            std::vector<std::pair<std::string, core::Material>>; // {id, material}
+        struct MaterialEntry
+        {
+            std::string_view id;
+            core::Material   material;
+        };
+        using MaterialEntries = std::vector<MaterialEntry>;
 
         enum class PixelFormat
         {
@@ -122,9 +126,9 @@ namespace asset
         };
 
         // text format
-        Result<core::Mesh>        obj(std::string_view text);
-        Result<LocalMaterialList> mtl(std::string_view text);
-        Result<SceneConfig>       json(std::string_view text);
+        Result<core::Mesh>    obj(std::string_view text);
+        Result<MaterialEntry> mtl(std::string_view text);
+        Result<SceneConfig>   json(std::string_view text);
         // binary format
         Result<ImageBuffer> png(std::span<const std::byte> bytes);
         Result<ImageBuffer> ppm(std::span<const std::byte> bytes);
