@@ -2,13 +2,8 @@
 
 #include <iostream>
 #include <string>
-
-template <typename... Args> std::string makeLogString(Args &&...args)
-{
-    std::ostringstream oss;
-    oss << ... << args;
-    return oss.str();
-}
+#include <sstream>
+#include <mutex>
 
 enum class LogLevel
 {
@@ -37,16 +32,21 @@ inline const char *toString(LogLevel level)
     return "";
 }
 
-inline void logMessage(LogLevel level, const char *func, const char *file, int line,
-                       std::string_view what)
+inline std::mutex &log_mutex()
 {
-    std::cerr << "[" << toString(level) << "]\t" << func << " @ " << file << ": " << line << ": "
-              << what << std::endl;
+    static std::mutex m;
+    return m;
 }
 
-inline void logMessage(LogLevel level, const char *func, const char *file, int line)
+template <typename... Args>
+inline void logMessage(LogLevel level, const char *func, const char *file, int line, Args &&...args)
 {
-    logMessage(level, func, file, line, std::string_view{});
+    std::ostringstream oss;
+    if constexpr (sizeof...(args) > 0)
+        (oss << ... << std::forward<Args>(args)); // fold + perfect forwarding
+    std::lock_guard<std::mutex> lock(log_mutex());
+    std::cerr << "[" << toString(level) << "]\t" << func << " @ " << file << ": " << line << ": "
+              << oss.str() << '\n';
 }
 
 // https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
