@@ -40,7 +40,7 @@ namespace core
 
     struct Submesh
     {
-        uint32_t       groupId; // MaterialName_#Number
+        std::string    groupId; // MaterialName_#Number
         MaterialHandle material;
         uint32_t       idxStart;
         uint32_t       idxEnd;
