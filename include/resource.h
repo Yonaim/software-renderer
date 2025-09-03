@@ -32,15 +32,15 @@ namespace resource
 #undef X
     template <class T> using Result = std::expected<T, ErrorCode>;
 
-    using MeshKey = std::string;                             // filePath
-    using TextureKey = std::string;                          // filePath
-    using MaterialKey = std::pair<std::string, std::string>; // {filePath, name}
+    using MeshKey = std::string;     // filePath
+    using TextureKey = std::string;  // filePath
+    using MaterialKey = std::string; // name (throw away file path)
 
     // =============================== Pool ====================================
     struct MeshPool
     {
-        std::vector<core::Mesh>           items;
-        std::map<std::string, MeshHandle> idToHandle;
+        std::vector<core::Mesh>       items;
+        std::map<MeshKey, MeshHandle> idToHandle;
     };
 
     struct MaterialPool
@@ -51,8 +51,8 @@ namespace resource
 
     struct TexturePool
     {
-        std::vector<core::Texture>           items;
-        std::map<std::string, TextureHandle> idToHandle;
+        std::vector<core::Texture>          items;
+        std::map<TextureKey, TextureHandle> idToHandle;
     };
 
     // ============================== Register =================================

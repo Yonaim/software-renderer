@@ -36,7 +36,7 @@ namespace asset
             auto materialResult = loadMaterial(materialCfg.file, materialCfg.name);
             if (!materialResult)
                 return std::unexpected(materialResult.error());
-            resource::MaterialKey key{materialCfg.file, materialCfg.name};
+            resource::MaterialKey key{materialCfg.name};
             core::Material       &material = materialResult.value();
 
             // register

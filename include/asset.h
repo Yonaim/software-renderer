@@ -96,10 +96,10 @@ namespace asset
         // file명은 caller가 추가해서 전체 Materialkey를 완성해야 함
         struct MaterialEntry
         {
-            std::string_view id;
+            std::string_view name;
             core::Material   material;
         };
-        using MaterialEntries = std::vector<MaterialEntry>;
+        using MaterialEntries = std::unordered_map<std::string_view, core::Material>;
 
         enum class PixelFormat
         {
@@ -126,9 +126,9 @@ namespace asset
         };
 
         // text format
-        Result<core::Mesh>    obj(std::string_view text);
-        Result<MaterialEntry> mtl(std::string_view text);
-        Result<SceneConfig>   json(std::string_view text);
+        Result<core::Mesh>      obj(std::string_view text);
+        Result<MaterialEntries> mtl(std::string_view text);
+        Result<SceneConfig>     json(std::string_view text);
         // binary format
         Result<ImageBuffer> png(std::span<const std::byte> bytes);
         Result<ImageBuffer> ppm(std::span<const std::byte> bytes);
