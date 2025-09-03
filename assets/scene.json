@@ -40,11 +40,11 @@
   },
 
   "materials": [
-      { "id": "Chrome", "file": "assets/materials/metals.mtl", "name": "Chrome" },
-      { "id": "Gold",   "file": "assets/materials/metals.mtl", "name": "Gold"   },
-     { "id": "Silver", "file": "assets/materials/metals.mtl", "name": "Silver" },
-    { "id": "PlasticRed",  "file": "assets/materials/plastics.mtl",  "name": "PlasticRed" },
-    { "id": "Glass",       "file": "assets/materials/glass.mtl" }
+      { "id": "Chrome_mat", "file": "assets/materials/metals.mtl", "name": "Chrome" },
+      { "id": "Gold_mat",   "file": "assets/materials/metals.mtl", "name": "Gold"   },
+     { "id": "Silver_mat", "file": "assets/materials/metals.mtl", "name": "Silver" },
+    { "id": "PlasticRed_mat",  "file": "assets/materials/plastics.mtl",  "name": "PlasticRed" },
+    { "id": "Glass_mat",       "file": "assets/materials/glass.mtl" }
   ],
 
   "geometries": [
