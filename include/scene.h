@@ -71,9 +71,9 @@ namespace scene
 
     struct HandlesById // id -> handle
     {
-        std::unordered_map<std::string, MeshHandle>     mesh;
-        std::unordered_map<std::string, MaterialHandle> material;
-        std::unordered_map<std::string, TextureHandle>  texture;
+        std::unordered_map<std::string_view, MeshHandle>     mesh;
+        std::unordered_map<std::string_view, MaterialHandle> material;
+        std::unordered_map<std::string_view, TextureHandle>  texture;
     };
 
     struct Scene
