@@ -4,6 +4,7 @@
 #include <vector>
 #include <expected>
 #include <map>
+#include <type_traits>
 #include "logger.h"
 
 namespace resource
@@ -87,26 +88,31 @@ namespace resource
     void logRegisterOutcome(const RegisterOutcome<HandleT, KeyT> &res, std::string_view id)
     {
         using Status = typename RegisterOutcome<HandleT, KeyT>::Status;
+        std::string key;
+        if constexpr (std::is_same<KeyT, MaterialKey>::value)
+            key = res.key.first + res.key.second;
+        else
+            key = res.key;
 
         // fail
         if (res.status == Status::Failed)
         {
             std::string_view reason = res.err ? getErrorMessage(*res.err) : "<unknown>";
-            LOG_ERROR(makeLogString("register failed: id='", res.key, "', reason=", reason));
+            LOG_ERROR("register failed: id='", key, "', reason=", reason);
             return;
         }
 
-        // success
+        //  success
         switch (res.status)
         {
         case Status::Reused:
-            LOG_DEBUG("id='", res.key, "' reused (handle=", res.handle, ")");
+            LOG_DEBUG("id='", key, "' reused (handle=", res.handle, ")");
             break;
         case Status::Inserted:
-            LOG_DEBUG("id='", res.key, "' inserted (handle=", res.handle, ")");
+            LOG_DEBUG("id='", key, "' inserted (handle=", res.handle, ")");
             break;
         case Status::Replaced:
-            LOG_INFO("id='", res.key, "' replaced (handle=", res.handle, ")");
+            LOG_INFO("id='", key, "' replaced (handle=", res.handle, ")");
             break;
         case Status::Failed: // 위에서 이미 처리
             break;
