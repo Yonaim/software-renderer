@@ -6,6 +6,7 @@ namespace fs = std::filesystem;
 namespace asset
 {
     // todo: 데이터 유효성 확인
+    // todo: 함수 분리
     Result<scene::Scene> loader::loadSceneAndResources(const fs::path    &sceneJson,
                                                        resource::Manager &mgr)
     {
@@ -28,33 +29,47 @@ namespace asset
         }
 
         // materials
+        // todo: texture ?
         for (const auto &materialCfg : config.materials)
         {
+            // load
             auto materialResult = loadMaterial(materialCfg.file, materialCfg.name);
             if (!materialResult)
                 return std::unexpected(materialResult.error());
-
             resource::MaterialKey key{materialCfg.file, materialCfg.name};
             core::Material       &material = materialResult.value();
-            mgr.registerMaterial(key, &material);
+
+            // register
+            auto registerResult = mgr.registerMaterial(key, &material);
+            resource::logRegisterOutcome(registerResult, materialCfg.id);
+            if (resource::isRegisterFailed(registerResult))
+                return std::unexpected(asset::ErrorCode::OperationFail); // todo: errorCode
         }
 
         // geometries
         for (const auto &geometryCfg : config.geometries)
         {
-            auto geometryResult = loadMesh(geometryCfg.file);
-            if (!geometryResult)
-                return std::unexpected(geometryResult.error());
+            // load
+            auto meshResult = loadMesh(geometryCfg.file);
+            if (!meshResult)
+                return std::unexpected(meshResult.error());
+            resource::MeshKey key{geometryCfg.file};
+            core::Mesh       &mesh = meshResult.value();
 
-            std::string key(geometryCfg.file);
-            core::Mesh &mesh = geometryResult.value();
-            mgr.registerMesh(key, &mesh);
+            // register
+            auto registerResult = mgr.registerMesh(key, &mesh);
+            resource::logRegisterOutcome(registerResult, geometryCfg.id);
+            if (resource::isRegisterFailed(registerResult))
+                return std::unexpected(asset::ErrorCode::OperationFail); // todo: errorCode
         }
 
         // objects
         for (const auto &objectCfg : config.objects)
         {
-            // todo: json 객체 내에서 일치하는 id를 찾고 해당 리소스의 핸들을 얻는다
+            scene::Object obj;
+            MeshHandle    meshHandle = outScene.handlesById.mesh[objectCfg.meshId];
+            outScene.addObject({std::string(objectCfg.id), meshHandle, objectCfg.pos, objectCfg.rot,
+                                objectCfg.scale});
         }
 
         return outScene;
