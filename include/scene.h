@@ -33,41 +33,45 @@ namespace scene
         }
     };
 
-    namespace light
+    enum class LightType
     {
-        struct Common
+        Directional,
+        Point,
+        Spot,
+        Ambient
+    };
+
+    struct Light
+    {
+        std::string id;
+        LightType   type; // directional, point, spot, ambient
+        math::Vec3  color{1, 1, 1};
+        float       intensity{1.0f};
+        bool        castShadow{false};
+
+        union
         {
-            std::string id;
-            math::Vec3  color;
-            float       intensity;
+            struct
+            {
+                math::Vec3 dir;
+            } directional;
+            struct
+            {
+                math::Vec3 pos;
+                float      range;
+            } point;
+            struct
+            {
+                math::Vec3 pos;
+                math::Vec3 dir;
+            } spot;
+            struct
+            { /* ambient has nothing extra */
+            } ambient;
         };
 
-        struct Directional : Common
-        {
-            math::Vec3 dir;
-            bool       castShadow;
-        };
-
-        struct Point : Common
-        {
-            math::Vec3 pos;
-            float      range;
-            bool       castShadow;
-        };
-
-        struct Spot : Common
-        {
-            math::Vec3 pos;
-            math::Vec3 dir;
-            bool       castShadow;
-        };
-
-        struct Ambient : Common
-        {
-        };
-    } // namespace light
-
-    using Light = std::variant<light::Directional, light::Point, light::Spot, light::Ambient>;
+        Light() {}
+    };
 
     struct HandlesById // id -> handle
     {
