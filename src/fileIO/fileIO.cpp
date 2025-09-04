@@ -26,6 +26,12 @@ namespace fileIO
         return bytes;
     }
 
+    std::string readText(const std::string &path)
+    {
+        std::vector<std::byte> text = readBytes(path);
+        return std::string((const char *)text.data(), text.size());
+    }
+
     bool writeBytes(const std::string &path, const std::vector<uint8_t> &bytes)
     {
         std::ofstream ofs;

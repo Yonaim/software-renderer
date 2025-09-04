@@ -29,7 +29,9 @@ namespace fileIO
     }
 #undef X
 
+    // todo: std::filesystem::path로 바꾸는 것 고려
     std::vector<std::byte> readBytes(const std::string &path);
+    std::string            readText(const std::string &path);
     bool                   writeBytes(const std::string &path, const std::vector<uint8_t> &bytes);
     bool writePPM(const std::string &path, int width, int height, const std::vector<uint8_t> &color,
                   bool isRGBA = true);
