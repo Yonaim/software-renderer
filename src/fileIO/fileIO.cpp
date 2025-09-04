@@ -11,8 +11,7 @@ namespace fileIO
         std::ifstream          ifs;
 
         // open
-        ifs.open(path, std::ifstream::in | std::ifstream::binary |
-                           std::ifstream::ate);
+        ifs.open(path, std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
 
         // get length
         length = ifs.tellg();
@@ -36,21 +35,20 @@ namespace fileIO
     {
         std::ofstream ofs;
 
-        ofs.open(path, std::ofstream::out | std::ofstream::binary |
-                           std::ofstream::trunc);
+        ofs.open(path, std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
         ofs.write((const char *)bytes.data(), bytes.size());
         ofs.close();
 
         return true;
     }
 
-    bool writePPM(const std::string &path, int width, int height,
-                  const std::vector<uint8_t> &color, bool isRGBA)
+    bool writePPM(const std::string &path, int width, int height, const std::vector<uint8_t> &color,
+                  bool isRGBA)
     {
         std::vector<uint8_t> buf;
         const int            pixelCnt = color.size() / (isRGBA ? 4 : 3);
-        const std::string    header = "P6\n" + std::to_string(width) + ' ' +
-                                   std::to_string(height) + "\n255\n";
+        const std::string    header =
+            "P6\n" + std::to_string(width) + ' ' + std::to_string(height) + "\n255\n";
 
         buf.reserve(header.size() + (3 * pixelCnt));
         buf.insert(buf.end(), header.begin(), header.end());
@@ -69,8 +67,8 @@ namespace fileIO
         return (writeBytes(path, buf));
     }
 
-    bool writePNG(const std::string &path, int width, int height,
-                  const std::vector<uint8_t> &color, bool isRGBA)
+    bool writePNG(const std::string &path, int width, int height, const std::vector<uint8_t> &color,
+                  bool isRGBA)
     {
         // TODO
         return true;
