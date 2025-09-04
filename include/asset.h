@@ -11,6 +11,11 @@
 
 namespace fs = std::filesystem;
 
+/**
+ * @brief loader는 내부적으로 parser를 호출한다.
+ *
+ */
+
 /*
 [File Format]
 - Geometry: obj
@@ -136,9 +141,6 @@ namespace asset
 
     namespace loader
     {
-        using KeyedMaterial = std::pair<resource::MaterialKey, core::Material>;
-        using KeyedMaterialList = std::vector<std::pair<resource::MaterialKey, core::Material>>;
-
         // load whole scene and all resources
         Result<scene::Scene> loadSceneAndResources(const fs::path    &sceneJson,
                                                    resource::Manager &mgr);
@@ -146,8 +148,8 @@ namespace asset
         Result<parser::SceneConfig> loadSceneConfig(const fs::path &jsonPath);
         Result<core::Mesh>          loadMesh(const fs::path &objPath);
         Result<core::Material>      loadMaterial(const fs::path &mtlPath, std::string_view name);
-        Result<KeyedMaterialList>   loadMaterialList(const fs::path &mtlPath);
-        Result<parser::ImageBuffer> loadImage(const fs::path &imgPath);
+        Result<parser::MaterialEntries> loadMaterialList(const fs::path &mtlPath);
+        Result<parser::ImageBuffer>     loadImage(const fs::path &imgPath);
 
     } // namespace loader
 } // namespace asset
