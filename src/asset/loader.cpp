@@ -1,4 +1,5 @@
 ﻿#include "asset.h"
+#include "fileIO.h"
 #include <variant>
 
 namespace fs = std::filesystem;
@@ -75,4 +76,44 @@ namespace asset
         return outScene;
     }
 
+    Result<parser::SceneConfig> loader::loadSceneConfig(const fs::path &jsonPath)
+    {
+        std::string text = fileIO::readText(jsonPath);
+        return (parser::json(text));
+    }
+
+    Result<core::Mesh> loader::loadMesh(const fs::path &objPath)
+    {
+        std::string text = fileIO::readText(objPath);
+        return (parser::obj(text));
+    }
+
+    Result<core::Material> loader::loadMaterial(const fs::path &mtlPath, std::string_view name)
+    {
+        std::string text = fileIO::readText(mtlPath);
+        auto        result = parser::mtl(text);
+        if (!result)
+            return std::unexpected(result.error());
+
+        parser::MaterialEntries &materials = result.value();
+        return materials[name];
+    }
+
+    Result<parser::MaterialEntries> loader::loadMaterialList(const fs::path &mtlPath)
+    {
+        std::string text = fileIO::readText(mtlPath);
+        return (parser::mtl(text));
+    }
+
+    Result<parser::ImageBuffer> loader::loadImage(const fs::path &imgPath)
+    {
+        std::vector<std::byte> bytes = fileIO::readBytes(imgPath);
+
+        if (imgPath.extension() == "ppm")
+            return parser::ppm(bytes);
+        else if (imgPath.extension() == "png")
+            return parser::png(bytes);
+        else
+            return std::unexpected(ErrorCode::InvalidParam);
+    }
 } // namespace asset
